@@ -1,0 +1,447 @@
+---
+title: "Assignment - III"
+author: "Mohammad Wasiq"
+date: '2022-06-22'
+output:
+  word_document: default
+  html_document: default
+---
+
+Name -: **Mohammad Wasiq**
+
+E-mail -: [**mohammadwasiq0786\@gmail.com**](mailto:mohammadwasiq0786@gmail.com){.email}
+
+# First Problem
+
+The data on features given in the table below are collected to estimate the published relative performance (PRP) of a centralised processing unit. The data is given in the CPU_Data file.
+
+![](images/Screenshot%20(189).png)
+
+**Load the Data**
+
+```{r}
+df<- readxl::read_excel("CPU_data.xlsx")
+
+# Head of Data 
+attach(df)
+
+# Head of Data 
+head(df)
+```
+
+a.	Split the data randomly into training (80%) and test (20%). Develop a CART model for PRP using training data
+```{r}
+library(rpart)
+library(caret)
+
+set.seed(1)
+indexes = createDataPartition(PRP, p = 0.80, list = F)
+train = df[indexes, ]
+test = df[-indexes, ]
+
+train_x = train[, -7]
+train_y = train[, 7]  # PRP
+
+test_x = test[, -7]
+test_y = test[, 7]  # PRP
+
+dim(train_x)
+```
+
+```{r}
+fit = rpart(PRP ~ ., data = train)
+
+
+par(xpd = NA) # otherwise on some devices the text is clipped
+plot(fit)
+text(fit, digits = 3)
+
+print(fit, digits = 2)
+```
+
+
+b.	Show the cp plot and give the optimum cp value
+```{r}
+library(rpart.plot)
+mymodel = rpart(PRP ~. ,data = train, method = 'class', control = rpart.control(minsplit = 2))
+
+# Cross validation and identification of cp
+plotcp(mymodel, pch = 19, col = "red")
+```
+
+Optimum cp = $0.019$ Corresponding to minimum cross validation relative error
+
+c.	Display the best CART model obtained (rpart.plot) and give your interpretation
+```{r}
+library(rpart.plot)
+fit.pruned = prune(fit, cp = 0.019)
+
+rpart.plot(fit.pruned)
+```
+
+d.	Compute the mean square error (MSE) and root mean square error (RMSE) for training data. Is the model reasonably accurate?
+
+```{r}
+pred_y_tr = predict(fit.pruned, train_x)
+#Accuracy checking
+
+#Next, we'll check the prediction accuracy with MSE, MAE, and RMSE metrics.
+
+print(head(data.frame(train_y, pred_y_tr)))
+
+msetr = sapply((train_y - pred_y_tr)^2, mean, 2)
+
+maetr = sapply(as.data.frame(train_y,  pred_y_tr), caret::MAE, 2)
+
+rmsetr = sapply(as.data.frame(train_y,  pred_y_tr), caret::RMSE, 2)
+
+tr_acc <- cat("MSE: ", msetr, "MAE: ", maetr, " RMSE: ", rmsetr)
+```
+e.	Validate the model on test data. Compute MSE and RMSE on test data
+```{r}
+pred_y = predict(fit.pruned, test_x)
+#Accuracy checking
+
+#Next, we'll check the prediction accuracy with MSE, MAE, and RMSE metrics.
+
+print(head(data.frame(test_y, pred_y)))
+
+mse = sapply((test_y - pred_y)^2, mean, 2)
+
+mae = sapply(as.data.frame(test_y,  pred_y), caret::MAE, 2)
+
+rmse = sapply(as.data.frame(test_y,  pred_y), caret::RMSE, 2)
+
+test_acc<- cat("MSE: ", mse, "MAE: ", mae, " RMSE: ", rmse)
+```
+
+f.	Provide the comparison table of MSE & RMSE for training and test data. Give your comments on the model accuracy and generalizability?
+```{r}
+data.frame(Errors = c("MSE", "MAE", "RMSE"), 
+           Training_accuracy = c(458.26, 107.89, 202.52), 
+           Test_accuracy = c(529.35, 85.55, 131.6)
+  )
+```
+
+g.	Validate the model on test data? Compute mean square error and root mean square on test data. Give your comments on model generalizability.
+
+h.	Develop a model to predict PRP using the Bagging method. 
+
+```{r}
+library(randomForest)
+mymodel = randomForest(PRP ~., data = train, mtry = 13, importance =  TRUE)
+mymodel
+```
+
+i.	Provide variable importance plot and give your comments?
+```{r}
+importance(mymodel)
+varImpPlot(mymodel)
+```
+
+j.	Compute the R2, mean square error and root mean square on training data. Give your comments on model accuracy.
+```{r, warning=FALSE}
+predtrain = predict(mymodel, newdata = train)
+restrain = train$PRP - predtrain
+mset = mean(restrain^2)
+
+R2t<- R2(predtrain, train$PRP, form = "traditional")
+
+rmset = sqrt(mse)
+cat("MSE: ", mset," RMSE: ", rmset, "R2: ", R2t)
+```
+
+k.	Validate the model on test data? Compute mean square error and root mean square on test data. Give your comments on model generalizability.
+```{r}
+predtest = predict(mymodel, newdata = test)
+restest = test$PRP - predtest
+mse = mean(restest^2)
+
+R2<- R2(predtest, test$PRP, form = "traditional")
+
+rmse = sqrt(mse)
+cat("MSE: ", mse," RMSE: ", rmse,  "R2: ", R2)
+```
+
+l.	Develop a model to predict PRP using the Random Forest method. 
+```{r}
+mymodel = randomForest(PRP ~., data = train, importance = TRUE)
+mymodel
+```
+
+m.	Provide variable importance plot and give your comments?
+```{r}
+importance(mymodel)
+varImpPlot(mymodel)
+```
+
+n.	Compute the R2, mean square error and root mean square on training data. Give your comments on model accuracy.
+```{r}
+predtrain = predict(mymodel, newdata = train)
+restrain = train$PRP - predtrain
+mset = mean(restrain^2)
+
+R2t<- caret::R2(predtrain, train$PRP, form = "traditional")
+
+rmset = sqrt(mse)
+cat("MSE: ", mset," RMSE: ", rmset, "R2: ", R2t)
+```
+
+
+o.	Validate the model on test data? Compute mean square error and root mean square on test data. Give your comments on model generalizability.
+```{r}
+predtest = predict(mymodel, newdata = test)
+restest = test$PRP - predtest
+mse = mean(restest^2)
+
+R2<- R2(predtest, test$PRP, form = "traditional")
+
+rmse = sqrt(mse)
+cat("MSE: ", mse," RMSE: ", rmse,  "R2: ", R2)
+```
+p.	Compare the Regression tree, bgging & random forest models and give your comments.
+
+From Regression tree, bgging & random forest models we can easily compute that the model using **Random Forest** is best most model as comparision because the value of **RMSE** of Random Forest Model is **36** and **30** for training and testing data respectively.
+
+q.	Compare the Regression tree, bgging & random forest models with the linear regression model of assignment 2 and give your comments.
+
+From Regression tree, bgging & random forest models we can easily compute that the model using **Random Forest** is best most model as comparision because the value of **RMSE** of Random Forest Model is **36** and **30** for training and testing data respectively.
+
+
+# Second Problem
+
+![](images/Screenshot%20(190).png)
+
+
+**Load the Data**
+```{r}
+df<- readxl::read_excel("Heart_Disease_Data.xlsx")
+
+# Head of Data 
+attach(df)
+
+# Head of Data 
+head(df)
+dim(df)
+names(df)
+```
+
+
+a.	Split the data randomly into training (80%) and test (20%). Develop a classification tree model for Result
+
+```{r}
+set.seed(1)
+indexes = createDataPartition(CP, p = 0.80, list = F)
+train = df[indexes, ]
+test = df[-indexes, ]
+
+train_x = train[, -14]
+train_y = train[, 14]  # PRP
+
+test_x = test[, -14]
+test_y = test[, 14]  # PRP
+
+dim(train_x)
+```
+
+```{r}
+fit = rpart(CP ~ ., data = train)
+
+
+par(xpd = NA) # otherwise on some devices the text is clipped
+plot(fit)
+text(fit, digits = 3)
+```
+
+b.	Show the cp plot and give the optimum cp value
+```{r}
+library(rpart.plot)
+mymodel = rpart(CP ~. ,data = train, method = 'class', control = rpart.control(minsplit = 2))
+
+# Cross validation and identification of cp
+plotcp(mymodel, pch = 19, col = "red")
+```
+
+Optimum $cp = 0.069$ Corresponding to minimum cross validation relative error
+
+c.	Display the best CART model obtained (rpart.plot) and give your interpretation
+```{r}
+library(rpart.plot)
+fit.pruned = prune(fit, cp = 0.069)
+
+rpart.plot(fit.pruned)
+```
+
+d.	Compute the actual versus predicted table, accuracy% and misclassification % on training data. Give your comments on model accuracy.
+```{r, warning=FALSE, message=FALSE}
+library("e1071")
+model<- naiveBayes(CP ~. , train)
+
+pred_y_tr = predict(model, train_x)
+
+
+# Confusion Matrix
+cmt <- table(train$CP, pred_y_tr)
+# Model Evaluation
+confusionMatrix(cmt)
+```
+
+
+e.	Validate the model on test data? Compute the actual versus predicted table, accuracy%  and misclassification % on test data. Give your comments on model generalizability.
+```{r}
+pred_y = predict(model, test_x)
+
+# Confusion Matrix
+cm <- table(test$CP, pred_y)
+# Model Evaluation
+confusionMatrix(cm)
+```
+
+
+f.	Develop an optimum model to predict result using the Bagging method. 
+```{r}
+library(ipred) 
+
+#fit the bagged model
+bag <- bagging(
+  formula = CP ~ .,
+  data = train,
+  nbagg = 75,   
+  coob = TRUE,
+  control = rpart.control(minsplit = 2, cp = 0.069)
+)
+
+#display fitted bagged model
+bag
+help(pack = ipred)
+```
+
+
+g.	Display variable importance plot and give your comments
+
+```{r}
+mymodel = randomForest(CP ~., data = train, mtry = 13, importance =  TRUE)
+
+mymodel
+
+importance(mymodel)
+
+varImpPlot(mymodel)
+```
+
+h.	Compute the actual versus predicted table, accuracy% and misclassification % on training data. Give your comments on model accuracy.
+```{r}
+pred_y_tr = predict(object = bag, newdata = train)
+
+u <- union(pred_y_tr, train$CP)
+
+t <- table(factor(pred_y_tr, u), factor(train$CP, u))
+
+confusionMatrix(t)
+```
+
+
+i.	Validate the model on test data? Compute the actual versus predicted table, accuracy% and misclassification % on test data. Give your comments on model generalizability.
+```{r}
+pred_y= predict(object = bag, newdata = test)
+
+uu <- union(pred_y, test$CP)
+
+tt <- table(factor(pred_y, uu), factor(test$CP, uu))
+
+confusionMatrix(tt)
+```
+
+
+j.	Develop a model to predict result using the Random Forest method. 
+```{r, warning=FALSE, message=FALSE}
+mymodel = randomForest(CP ~., data = train, importance = TRUE)
+mymodel
+```
+
+
+k.	Display variable importance plot and give your comments
+```{r}
+importance(mymodel)
+
+varImpPlot(mymodel)
+```
+
+
+l.	Compute the actual versus predicted table, accuracy % and misclassification % on training data. Give your comments on model accuracy.
+```
+pred_y_tr = predict(mymodel, train)
+
+u <- union(pred_y_tr, train$CP)
+
+t <- table(factor(pred_y_tr, u), factor(train$CP, u))
+
+confusionMatrix(t)
+```
+
+m.	Validate the model on test data? Compute the actual versus predicted table, accuracy % and misclassification % on test data. Give your comments on model generalizability.
+```
+pred_y= predict(object = mymodel, newdata = test)
+
+uu <- union(pred_y, test$CP)
+
+tt <- table(factor(pred_y, uu), factor(test$CP, uu))
+
+confusionMatrix(tt)
+```
+
+
+n.	Compare the classification tree, bagging & random forest models and give your comments.
+
+From Regression tree, bgging & random forest models we can easily compute that the model using Random Forest is best most model as comparision because the value of specificity of Random Forest Model is high training and testing data respectively.
+
+o.	Compare the classification tree, bgging & random forest models with the logistic regression model of assignment 2 and give your comments.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

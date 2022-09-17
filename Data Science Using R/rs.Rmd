@@ -1,0 +1,652 @@
+---
+title: "ISI Data Science"
+author: "Mohammad Wasiq"
+date: '2022-05-03'
+output: html_document
+---
+
+Here I am coding for my course , which is organized by **Indian Statistical Institute** , *Banglore* by name **Data Science Using R** .
+
+------------------------------------------------------------------------
+
+# Descriptive Statistics
+
+## First Problem
+
+**Exercise 1 :** The monthly credit card expenses of an individual in 1000 rupees is given in the file Monthly_Expenses.csv.
+
+a.  Read the dataset to R studio
+
+```{r}
+library(readr)
+Monthly_Expenses <- read_csv("F:/ISI R Course/Dataset/Monthly_Expenses.csv")
+head(Monthly_Expenses)
+```
+
+b.  Compute mean, median minimum, maximum, range, variance, standard deviation, skewness, kurtosis and quantiles of Expenses
+
+```{r}
+exp <- Monthly_Expenses$Expenses
+# Mean of Data 
+mean(exp)
+# Trimed Mean at 10 %
+mean(exp , trom = 0.10)
+
+# Median 
+median(exp)
+
+# Minimum
+min(exp)
+
+# Maximum
+max(exp)
+
+# range i.e. (Max - Min)
+range(exp)
+
+# Variance
+var(exp)
+
+# Standard Deviation
+sd(exp)
+
+# Sekewness
+library(psych)
+
+skew(exp)
+
+# Kurtosis
+skew(exp)
+
+# Quartiles
+quantile(exp)
+
+# 90th percentile
+quantile(exp , 0.90)
+    ```
+
+c.  Compute default summary of Monthly Expenses
+
+```{r}
+# Using Base R
+summary(exp)
+
+# Using psych
+describe(exp)
+```
+
+d.  Draw Histogram of Monthly Expenses
+
+**Histogarm**
+
+```{r}
+hist(exp)
+
+hist(exp , col = "orange" , main = "Histogarm of Monthly Expenses" , xlab = "Monthly Expenses" , ylab = "Frequency")
+```
+
+**Dot Plot**
+
+```{r}
+dotchart(exp)
+
+dotchart(exp , main = "Dot Chart of Monthly Expenses" , xlab = "Monthly Expenses" , ylab = "Frequency")
+
+```
+
+Main difference between *Dot Chart* and *Scatter Plot is Dot Chart is Univariate* and *Scatter Plot* is *Bivariate* .
+
+**Box-Plot**
+
+```{r}
+boxplot(exp)
+
+boxplot(exp , col = "orange" , main = "Boxplot of Monthly Expenses" )
+```
+
+## Second Problem
+
+**Exercise 2 :** The data on productivity (number of tasks completed), developer experience (1: Experienced, 2: Fresher), Code reuse (1:High, 2: Low) and usage of knowledge repository usage (1: High , 2: Low) of an technical support process are given in file Productivty.csv.
+
+a.  Import the file to R Studio
+
+```{r}
+library(readxl)
+Productivity <- read_excel("Dataset/Productivity.xlsx")
+head(Productivity)
+```
+
+b.  Copy first 20 records from the file to another dataset and save it as a csv file
+
+```{r}
+new_data <- Productivity[1:20 , ]
+dim(new_data)
+
+# Export the above data
+write.csv(new_data , "F:/ISI R Course/Dataset/Productivity_20.csv")
+```
+
+c.  Compute descriptive summary of variable Productivity.
+
+```{r}
+# Using psych library
+library(psych)
+describe(Productivity)
+
+# Using Base R
+## Summary of Productivity Variable 
+summary(Productivity$Productivity)
+```
+
+d.  Convert the variables developer experience, code reuse & knowledge repository usage to categorical (factor).
+
+```{r}
+# Converting of Developer Variable into factor
+experience <- factor(Productivity$Developer_Experience , labels = c("Experienced" , "Fresher"))
+
+# Converting of Code_Reuse Variable into factor
+reuse <- factor(Productivity$Code_Reuse , labels = c("High" , "Low"))
+
+# Converting of Knowledge_Repository_Usage into factor
+know_rep <- factor(Productivity$Knowledge_Repository_Usage , labels = c("High" , "Low"))
+```
+
+e.  Check whether the average productivity varies with developer experience ?
+
+```{r}
+# Computing average productivity with developer experience 
+aggregate(Productivity$Productivity, by = list(experience), FUN = mean)
+```
+
+Or We get the same result as above Using the following code
+
+    aggregate(Productivity$Productivity ~ experience , FUN = mean)
+
+**Boxplot**
+
+Average and Boxplot of Credit Card usage by sex
+
+```{r}
+prodn <- Productivity$Productivity
+
+boxplot(prodn ~ experience , 
+        main = "Box Plot" ,
+        xlab = "Developer Experence" ,
+        ylab = "Productivity")
+```
+
+f.  Check whether the average productivity vary with code reuse ?
+
+Average and Boxplot for Productivity with Code Reuse
+
+```{r}
+aggregate(prodn ~ reuse , FUN = mean)
+
+boxplot(prodn ~ reuse , 
+        main = "Box Plot" ,
+        xlab = "Code Resuse" ,
+        ylab = "Productivity")
+```
+
+g.  Check whether the average productivity vary with knowledge repository usage ?
+
+Average and Boxplot for Productivity with Knowledge Repository Usage
+
+```{r}
+aggregate(prodn ~ know_rep , FUN = mean)
+
+boxplot(prodn ~ know_rep , 
+        main = "Box Plot" ,
+        xlab = "Knowledge Repository Usage" ,
+        ylab = "Productivity")
+```
+
+h.  Compute the aggregate average of productivity with developer experience & code reuse ?
+
+Average and Boxplot for Productivity with Experence and Code Reuse
+
+```{r}
+aggregate(prodn ~ experience + reuse , FUN = mean)
+
+boxplot(prodn ~ experience + reuse , 
+        main = "Box Plot" ,
+        ylab = "Productivity")
+```
+
+Average and Boxplot for Productivity with Experince and know_rep
+
+```{r}
+aggregate(prodn ~ experience + know_rep , FUN = mean)
+
+boxplot(prodn ~ experience + know_rep , 
+        main = "Box Plot" ,
+        ylab = "Productivity")
+```
+
+h.i. Compute the aggregate average of usage with all three factors ?
+
+Average and Boxplot for Productivity with Experince , Code Reuse and know_rep_usage
+
+```{r}
+aggregate(prodn ~ experience + reuse + know_rep , FUN = mean)
+
+boxplot(prodn ~ experience + reuse + know_rep , 
+        main = "Box Plot" ,
+        ylab = "Productivity")
+```
+
+We can also calculate the `mean , median , summary , describe , sd , var`
+
+Summary and Boxplot for Productivity with Experince , Code Reuse and know_rep_usage
+
+```{r}
+aggregate(prodn ~ experience + reuse + know_rep, FUN = summary)
+
+
+aggregate(prodn ~ experience + reuse + know_rep , FUN = describe)
+```
+
+## Third Problem
+
+**Exercise 3 :** In IT service provider has conducted a customer satisfaction survey.
+
+The four important questions asked are given below: The respondents have to answer each question in a 7 point scale with 1: least satisfied and 7: most satisfied. The data is given in Csat_Freq_table.csv
+
+```{r}
+library(readr)
+df <- read_csv("Dataset/CSat_Freq_Table.csv")
+
+head(df)
+```
+
+Q1. Considering all aspects of your interactions, you are very satisfied with your experience with our company
+
+Q2. You will definitely continue to use our company for your future needs
+
+Q3. If a professional associate/colleague has a need for IT consulting and solutions / IT Infrastructure Services/ IT Engineering Services, you will definitely recommend our company
+
+Q4. You believe that our company delivers the best value for money
+
+    a. Summarize each question responses using frequency table
+
+```{r}
+# Frequency Table for q1 variable
+table(df$q1)
+
+# Horizontal Frequency Table
+cbind(table(df$q1))
+
+# Frequency Table for q2 variable
+cbind(table(df$q2))
+
+# Frequency Table for q3 variable
+cbind(table(df$q3))
+
+# Frequency Table for q4 variable
+cbind(table(df$q4))
+```
+
+    b. Pictorially represent the responses to each question using pie chart and bar chart ?
+
+```{r}
+# Pie Chart for q1 variable
+pie(table(df$q1))
+
+# Barplot for q1 variable
+barplot(table(df$q1))
+
+# Pie Chart for q2 variable
+pie(table(df$q2))
+
+# Barplot for q2 variable
+barplot(table(df$q2))
+
+# Pie Chart for q3 variable
+pie(table(df$q3))
+
+# Barplot for q3 variable
+barplot(table(df$q3))
+
+# Pie Chart for q4 variable
+pie(table(df$q4))
+
+# Barplot for q4 variable
+barplot(table(df$q4))
+```
+
+# DATA PREPROCESSING
+
+There are some techniques of Data Processing are as follows :
+
+1.  Missing value replenishment
+
+2.  Merging data files
+
+3.  Appending the data files
+
+4.  Transformation or normalization
+
+## Missing Values Replenishment
+
+### First Problem
+
+**Example :** The data on sprint productivity along with software development process variables are given in Preprocesing_Data1 file. Handle the missing values .
+
+```{r}
+library(readxl)
+df <- read_excel("F:/ISI R Course/Dataset/Preprocessing_Data_I.xlsx")
+
+# Dimension of Data
+dim(df)
+
+# Head of Data
+head(df)
+```
+
+**Delete the Missing Records from the Dataset**
+
+```{r}
+new_df <- na.omit(df)
+
+dim(new_df)
+```
+
+Here we can easily see that 2 rows are delete from the original dataset.
+
+**Disadvantage of Omitting**
+
+i.  Number of records will reduce
+
+ii. Some of the data already available will become unusable
+
+**Replace the missing values with variable mean, median, etc**
+
+```{r}
+names(df)
+```
+
+**Replace 'Review_Type' missing values by its Mean**
+
+```{r, message=FALSE , warning=FALSE}
+attach(df)
+
+# Find the Mean
+review_time_mean <- mean(Review_Time , na.rm = T)
+
+review_time_mean
+
+# Replace Missing values by Mean
+Review_Time[is.na(Review_Time)] = review_time_mean
+
+Review_Time
+```
+
+Here we can see that the missing observations are replaced by mean *(25.78947)* .
+
+**Replace 'Test_Coverage' missing values by its Median**
+
+```{r}
+# Find the Median
+test_coverage_median <- median(Test_Coverage , na.rm = T)
+
+test_coverage_median
+
+# Replace Missing values by Median
+Test_Coverage[is.na(Test_Coverage)] = test_coverage_median
+
+Test_Coverage
+```
+
+Here we can see that the missing observations are replaced by median *(70)* .
+
+**Replace 'Review_Coverage' missing values by its 95**
+
+```{r}
+# Replace Missing values by 95
+Review_Coverage[is.na(Review_Coverage)] = 95
+Review_Coverage
+```
+
+Here we can see that the missing observations are replaced by value *(95)* .
+
+**Combine all fields into a data set**
+
+```{r}
+missing_value_df <- cbind(Reviewer_Skill , Review_Type , Domain_Knowledge , Review_Time , Test_Coverage , Review_Coverage , Reuse , Review_Rate , Sprint_Prod)
+
+missing_value_df
+```
+
+**Exporting the above Data**
+
+```{r}
+write.csv(missing_value_df , "F:/ISI R Course/missing_value_handle.csv")
+```
+
+## Merging and Appending the Data Files
+
+### Second Problem
+
+**Exercise :** The data is collected for optimizing a mailing campaign. The features are given in *Mail_Repond_Features.csv* file and the response is given in *Mail_Respond_Response.txt file*. Can you merge the two files into a single data set ?
+
+```{r}
+# Raed csc file 
+library(readr)
+Features <- read_csv("F:/ISI R Course/Dataset/Mail_Respond_Features.csv")
+
+head(Features)
+
+# To Read txt file 
+Response <- read.delim("F:/ISI R Course/Dataset/Mail_Respond_Response.txt")
+
+head(Response)
+
+# Merging the both files (csv and txt)
+merged_data <- merge(Features , Response , by = "SL_No")
+
+head(merged_data)
+```
+
+**Appending**
+
+```{r}
+library(readxl)
+
+# Importing First Dataset 
+SP_I <- read_excel("F:/ISI R Course/Dataset/Preprocessing_Data_I.xlsx")
+
+
+head(SP_I)
+
+# Importing Second Dataset
+SP_II <- read_csv("F:/ISI R Course/Dataset/Preprocessing_Data_II.csv")
+
+head(SP_II)
+
+# Appending the Data
+appended_data <- rbind(SP_I , SP_II)
+
+dim(appended_data)
+```
+
+## Transformation / Normalization
+
+**Z - Transformation** $$Z-Transformation \,\, Data = \frac{(Data - Mean)}{SD} \\
+OR \\
+= \frac{(x-\bar{x})}{\sigma}$$
+
+## Third Problem
+
+**Exercise :** The TAT data of a tech support process is given in TAT file. Normalize the variables in the TAT data ?
+
+```{r}
+# Import the Data
+df <- read_excel("F:/ISI R Course/Dataset/TAT.xlsx")
+
+# Head of Data
+head(df)
+
+# Summary of Data using psych 
+library(psych)
+describe(df)
+
+# Z - Transformation 
+z_df <- scale(df)
+
+# Transformed data head
+head(z_df)
+
+# Summary of transformed head
+describe(z_df)
+```
+
+**Using Own function**
+
+```{r}
+m <- apply(df, 2, mean)
+
+s <- apply(df, 2, sd)
+
+zt_df <- (df - m) / s
+
+head(zt_df)
+```
+
+**Min - Max Method** $$Min-Max \,\, Transformation \,\, Data = \frac{(Data - Minimum)}{Maximum - Maximum} \\
+OR \\
+= \frac{(x-min)}{max - min}$$
+
+```{r}
+# Computing minimum and maximum of data
+mins <- apply(df, 2, min)
+
+maxs <- apply(df, 2, max)
+
+# Making min-max transformation
+tr_data <- scale(df, center = mins, scale = maxs - mins)
+
+# Head of Transformation
+head(tr_data)
+
+# Summary of Transformation
+describe(tr_data)
+```
+
+**Min-Max Transformation**
+
+```{r}
+# Computing minimum and maximum of data
+mins <- apply(df, 2, min)
+
+maxs <- apply(df, 2, max)
+
+mmt <- (df - mins) / (maxs - mins)
+
+# Head of Transformation
+head(mmt)
+```
+
+## Data Visualization
+
+Methodology for exploring the relationship between fields.
+
+Generally used to explore relationship between response and explanatory variables in supervised learning .
+
+| Explanatory Variable | Response    | Plot                   |
+|----------------------|-------------|------------------------|
+| Continuous           | Continuous  | Scatter Plot           |
+| Continuous           | Categorical | Boxplot , Density Plot |
+
+
+### Forth Problem 
+**Example :** The data on temperature, time, viscosity and yield are given in *Chemical_Yield file* .
+
+1. Replace the missing values using imputation ?
+
+2. Explore the relationship of temperature, time and viscosity to yield graphically .
+
+```{r , message=FALSE , warning=FALSE}
+df <- read_excel("F:/ISI R Course/Dataset/Chemical_Yield.xlsx")
+
+# Attach the Data
+attach(df)
+
+# Head of Data
+head(df)
+
+df <- df[, -1]
+
+# Replacing the Missing Values with Mean Temperature
+mean_temp <- mean(Temperature , na.rm = T)
+mean_temp
+
+Temperature[is.na(Temperature)] = mean_temp
+
+df1 <- cbind(Temperature , Time , Viscosity , Yield)
+
+# Ensuring the dataset into dataframe format
+df1 <- as.data.frame(df1)
+
+# Import the caret package
+library(caret)
+
+# Separete x's and y variables
+x <- df1[ , 1:3]
+
+y <- df1$Yield
+
+# Data Vusualization
+featurePlot(x , y   , plot = "scatter" , pch = 19)
+```
+
+### Fifth Problem
+**Example :** The data on defect proneness of a tech support process is given in *Defect_Proneness* file. Explore the relationship between defect proneness with the process variables graphically .
+```{r}
+df <- read_excel("F:/ISI R Course/Dataset/Defect_Proneness.xlsx")
+
+head(df)
+
+# Changing mydata to dataframe format
+df = as.data.frame(df)
+
+# Importing caret library
+library(caret)
+
+# Seperating x and y varaibles
+x = df[, 1:8]
+y = df[, 9]
+y = as.factor(y)
+
+# Density plot
+featurePlot(x, y, plot = "density",
+            auto.key = list(columns = 3) ,
+            scales = list(x = list(relation = "free") ,
+                          y = list(relation = "free")) ,
+            adjust = 1.5, pch = "" ,
+            layout = c(4,2))
+
+# Box plot
+featurePlot(x, y, plot = "box" ,
+            auto.key = list(columns = 3) ,
+            scales = list(x = list(relation = "free") ,
+                          y = list(relation = "free")) ,
+            layout = c(4,2))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

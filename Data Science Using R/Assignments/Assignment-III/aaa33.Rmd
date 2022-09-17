@@ -1,0 +1,34 @@
+---
+title: "Untitledas1"
+author: "Mohammad Wasiq"
+date: '2022-06-30'
+output: html_document
+---
+
+
+```{r}
+df<- readxl::read_excel("CPU_data.xlsx")
+
+# Head of Data 
+attach(df)
+
+# Head of Data 
+head(df)
+```
+
+
+```{r}
+set.seed(1)
+indexes = createDataPartition(PRP, p = 0.80, list = F)
+train = df[indexes, ]
+test = boston[-indexes, ]
+
+train_x = train[, -7]
+train_y = train[, 7]
+
+test_x = test[, -7]
+test_y = test[,7]
+
+dim(df)
+```
+

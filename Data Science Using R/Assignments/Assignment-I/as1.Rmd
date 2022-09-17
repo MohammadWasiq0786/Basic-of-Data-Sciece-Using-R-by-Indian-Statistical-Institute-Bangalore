@@ -1,0 +1,537 @@
+---
+title: "Assignment"
+author: "Mohammad Wasiq"
+date: '2022-05-08'
+output: html_document
+---
+
+# First Assignment
+
+**Exercise 1 :** Company manufacturing valves are facing the problem of high torque variation in their actuator subassembly. The company wants to identify the variables impacting the torque variation in actuator subassembly. Through brainstorming the project team have identified seven variables suspected to influence the torque variation.
+
+a.  The company has two manufacturing plants located at Bangalore and Pune. The data collected from Bangalore plant is given in *Actuator_1* file and that from Pune plant is given in *Actuator_II* file. Join these files into a single dataset ?
+
+```{r}
+library(readxl)
+df1 <- read_excel("F:/ISI R Course/Assignments/Actuator_I.xlsx")
+
+dim(df1)
+
+df2 <- read_excel("F:/ISI R Course/Assignments/Actuator_II.xlsx")
+
+dim(df2)
+
+# Joining both the files 
+df <- rbind(df1 , df2)
+
+dim(df)
+
+# Head of Joined Data
+head(df)
+```
+
+b.  Provide the descriptive summary of all the variables. For categorical variables provide summary using frequency table. Also provide the graphical summary of each variable using appropriate graphs like boxplot, histogram, pie chart, bar plot, etc?
+
+```{r}
+library(psych)
+round(describe(df[, -c(1 , 5 , 9)]) , 3)
+```
+
+1.  **Bearing_to_bearing_Length**
+
+-   There are 56 observations .
+
+-   Minimum , Maximum and Range are **147.7** , **148.19** and **0.496** respectively .
+
+-   Mean and Trimmed Mean are **147.94** and **147.94** respectively .
+
+-   Median is **147.95 .**
+
+-   Standard Deviation and standard error are **0.208** and **0.028** respectively.
+
+-   Skewness and Kurtosis are **-0.003** and **-1.96** respectively .
+
+2.  **Driver_Shaft_Length**
+
+-   There are 56 observations .
+
+-   Minimum , Maximum and Range are **127.93** , **127.95** and **0.019** respectively .
+
+-   Mean and Trimmed Mean are **127.94** and **127.94** respectively .
+
+-   Median is **127.94 .**
+
+-   Standard Deviation and standard error are **0.006** and **0.001** respectively.
+
+-   Skewness and Kurtosis are **0.045** and **-1.18** respectively .
+
+3.  **Worm_Length**
+
+-   There are 56 observations .
+
+-   Minimum , Maximum and Range are **68** , **68.02** and **0.019** respectively .
+
+-   Mean and Trimmed Mean are **68.01** and **68.01** respectively .
+
+-   Median is **68.01** .
+
+-   Standard Deviation and standard error are **0.005** and **0.001** respectively.
+
+-   Skewness and Kurtosis are **-0.02** and **-1.14** respectively .
+
+4.  **Thickness**
+
+-   There are 56 observations .
+
+-   Minimum , Maximum and Range are **1.46** , **1.54** and **0.084** respectively .
+
+-   Mean and Trimmed Mean are **1.489** and **1.489** respectively .
+
+-   Median is **1.499** .
+
+-   Standard Deviation and standard error are **0.018** and **0.002** respectively.
+
+-   Skewness and Kurtosis are **0.163** and **0.048** respectively .
+
+5.  **Height**
+
+-   There are 56 observations .
+
+-   Minimum , Maximum and Range are **2.08** , **2.28** and **0.2** respectively .
+
+-   Mean and Trimmed Mean are **2.183** and **2.185** respectively .
+
+-   Median is **2.19** .
+
+-   Standard Deviation and standard error are **0.045** and **0.006** respectively.
+
+-   Skewness and Kurtosis are **-0.327** and **-0.089** respectively .
+
+6.  **Load**
+
+-   There are 56 observations .
+
+-   Minimum , Maximum and Range are **2825** , **3433** and **608** respectively .
+
+-   Mean and Trimmed Mean are **3160.32** and **3164.34** respectively .
+
+-   Median is **3158** .
+
+-   Standard Deviation and standard error are **135.3** and **18.081** respectively.
+
+-   Skewness and Kurtosis are **-0.271** and **-0.519** respectively .
+
+**Frequency Tables for Categorical Data**
+
+```{r}
+swpt <- cbind(table(df$Star_Washer_position))
+
+swpt
+```
+
+**Star_Washer_position**
+
+-   There are **32** observations which are Bearing End.
+
+-   There are **24** observations which are Worm End.
+
+```{r}
+tt <- cbind(table(df$Torque_Variation))
+
+tt
+```
+
+**Torque_Variation**
+
+-   There are **28** observations which are Hihg.
+
+-   There are **28** observations which are Low.
+
+**Graphics**
+
+*Graphics for Categorical Data*
+
+```{r}
+# Pie Chart for Star_Washer_position variable
+pie(swpt , col = c("steelblue" , "pink"))
+
+# Barplot for Star_Washer_position variable
+barplot(swpt , col = c("steelblue" , "pink"))
+
+# Pie Chart for Torque Variation variable
+pie(tt , col = c("green" , "orange"))
+
+# Barplot for Torque Variation variable
+barplot(tt , col = c("green" , "orange"))
+```
+
+*Graphics for Quantitative Data*
+
+```{r}
+bl <- df$Bearing_to_bearing_Length
+sl <- df$Driver_Shaft_length
+wl <- df$Worm_length
+wp <- df$Star_Washer_position
+t <- df$Thickness
+h <- df$Height
+l <- df$Load
+tv <- df$Torque_Variation
+
+# Correspond to Star Washer position
+# Boxplot wp and bl
+boxplot(bl ~ wp , 
+        main = "Boxplot" , 
+        xlab = "Star Washer position" ,
+        ylab = "Bearing to bearing Length")
+
+# Boxplot wp and sl
+boxplot(sl ~ wp , 
+        main = "Boxplot" , 
+        xlab = "Star Washer position" ,
+        ylab = "Driver Shaft length")
+
+# Boxplot wp and wl
+boxplot(wl ~ wp , 
+        main = "Boxplot" , 
+        xlab = "Star Washer position" ,
+        ylab = "Worm length")
+
+# Boxplot wp and t
+boxplot(t ~ wp , 
+        main = "Boxplot" , 
+        xlab = "Star Washer position" ,
+        ylab = "Thickness")
+
+# Boxplot wp and h
+boxplot(h ~ wp , 
+        main = "Boxplot" , 
+        xlab = "Star Washer position" ,
+        ylab = "Height")
+
+# Boxplot wp and l
+boxplot(l ~ wp , 
+        main = "Boxplot" , 
+        xlab = "Star Washer position" ,
+        ylab = "Load")
+
+
+# Correspond to Torque Variation
+# Boxplot tv and bl
+boxplot(bl ~ tv , 
+        main = "Boxplot" , 
+        xlab = "Torque Variation" ,
+        ylab = "Bearing to bearing Length")
+
+# Boxplot tv and sl
+boxplot(sl ~ tv , 
+        main = "Boxplot" , 
+        xlab = "Torque Variation" ,
+        ylab = "Driver Shaft length")
+
+# Boxplot tv and wl
+boxplot(wl ~ tv , 
+        main = "Boxplot" , 
+        xlab = "Torque Variation" ,
+        ylab = "Worm length")
+
+# Boxplot tv and t
+boxplot(t ~ tv , 
+        main = "Boxplot" , 
+        xlab = "Torque Variation" ,
+        ylab = "Thickness")
+
+# Boxplot tv and h
+boxplot(h ~ tv , 
+        main = "Boxplot" , 
+        xlab = "Torque Variation" ,
+        ylab = "Height")
+
+# Boxplot tv and l
+boxplot(l ~ tv , 
+        main = "Boxplot" , 
+        xlab = "Torque Variation" ,
+        ylab = "Load")
+
+```
+
+c.  Identify the relationship of explanatory variables with torque variation using appropriate data visualization technique ? Give your interpretation
+
+```{r}
+aggregate(bl ~ wp , FUN = mean)
+# Boxplot wp and bl
+boxplot(bl ~ wp , 
+        main = "Boxplot" , 
+        xlab = "Star Washer position" ,
+        ylab = "Bearing to bearing Length")
+```
+
+-   Mean of Bearing to bearing Length where the Star Washer position is Bearing End is **147.967**
+
+-   Mean of Bearing to bearing Length where the Star Washer position is Worm End is **147.913**
+
+```{r}
+# Boxplot wp and sl
+aggregate(sl ~ wp , FUN = mean)
+boxplot(sl ~ wp , 
+        main = "Boxplot" , 
+        xlab = "Star Washer position" ,
+        ylab = "Driver Shaft length")
+```
+
+-   Mean of Driver Shaft length where the Star Washer position is Bearing End is **127.94**
+
+-   Mean of Driver Shaft length where the Star Washer position is Worm End is **127.94**
+
+```{r}
+# Boxplot wp, tv and bl
+aggregate(bl ~ wp + tv , FUN = mean)
+boxplot(bl ~ wp + tv, 
+        main = "Boxplot" , 
+        xlab = "Star Washer position")
+```
+
+-   Mean of Driver Shaft length where the Star Washer position is Bearing End and Torque Variation is High is **147.74**
+
+-   Mean of Driver Shaft length where the Star Washer position is Worm End and Torque Variation is High is **147.74**
+
+-   Mean of Driver Shaft length where the Star Washer position is Bearing End and Torque Variation is Low is **148.145**
+
+-   Mean of Driver Shaft length where the Star Washer position is Worm End and Torque Variation is Low is **148.15**
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Second Assignment
+**Example 2** An application support process like to develop a model to estimate the time taken to resolve the tickets they receive. Through discussions, the project team has identified four explanatory variables suspected to be impacting the resolution time
+
+a.	The data is collected on the resolution time and explanatory variables. The explanatory variable data is collected from the company server and is given in Resolution_TimeI file and the resolution time data is collected from client-server and is given in Resolution_TimeII file. Kindly merge the two files.
+```{r}
+# Import require package
+library(readxl)
+
+# Read the 1st data
+df1 <- read_excel("Assignments/Resolution_TimeI.xlsx")
+
+# Dimension of 1st Data
+dim(df1)
+
+# Head of data
+head(df1)
+
+# Read the 2nd data
+df2 <- read_excel("Assignments/Resolution_TimeII.xlsx")
+
+# Dimension the 2nd Data
+dim(df2)
+
+# Head of data
+head(df2)
+
+# Merge the data
+df <- merge(df1 , df2 , by = 'SL_No')
+
+# Dimension of merged data
+dim(df)
+
+# Head of merged data
+head(df)
+```
+
+b.	Is the dataset contains missing values ? Replace the missing values with appropriate statistics. 
+
+- Yes in this data there are misssing values. So, we can replace that missing values by using appropriate statistics.
+
+**Replce the missing value of Volume by its mean**
+```{r, message=FALSE , warning=FALSE}
+attach(df)
+vol <- df$Volume
+
+# Find the Mean
+volume_mean <- mean(vol , na.rm = T)
+
+volume_mean
+
+# Replace Missing values by Mean
+vol[is.na(vol)] = volume_mean
+
+vol
+```
+Here we can see that the missing observations are replaced by mean *(61.714)* at 6th position.
+
+**Replace Team_Expertise missing value by its mean**
+```{r}
+# Find the Mean
+Team_Experience_mean <- mean(Team_Experience , na.rm = T)
+
+Team_Experience_mean
+
+# Replace Missing values by Mean
+Team_Experience[is.na(Team_Experience)] = Team_Experience_mean
+
+Team_Experience
+```
+
+Here we can see that the missing observations are replaced by mean *(18.83929)* at 17th position.
+
+**Replace Domain Expertise missing value by its mean**
+```{r}
+# Find the Mean
+Domain_Expertise_mean <- mean(Domain_Expertise , na.rm = T)
+
+Domain_Expertise_mean
+
+# Replace Missing values by Mean
+Domain_Expertise[is.na(Domain_Expertise)] = Domain_Expertise_mean
+
+Domain_Expertise
+```
+
+Here we can see that the missing observations are replaced by mean *(13.42857)* at 12th position.
+
+**Combine all columns**
+
+```{r}
+missing_value_df <- cbind(Volume, Team_Experience, Domain_Expertise, Resolution_Time)
+
+mdf <- data.frame(missing_value_df) ; head(mdf)
+```
+
+c. Prepare the descriptive summary of each variable after replenishment of missing values.
+
+```{r}
+library(psych)
+
+describe(mdf)
+```
+
+1.  **Volume**
+
+-   There are 57 observations .
+
+-   Minimum , Maximum and Range are **5** , **89** and **84** respectively .
+
+-   Mean and Trimmed Mean are **61.71** and **64.12** respectively .
+
+-   Median is **64** .
+
+-   Standard Deviation and standard error are **19.65** and **2.60** respectively.
+
+-   Skewness and Kurtosis are **-1.25** and **1.17** respectively .
+
+2.  **Team_Experence**
+
+-   There are 57 observations .
+
+-   Minimum , Maximum and Range are **9** , **31** and **22** respectively .
+
+-   Mean and Trimmed Mean are **18.84** and **18.72** respectively .
+
+-   Median is **19** .
+
+-   Standard Deviation and standard error are **4.58** and **0.61** respectively.
+
+-   Skewness and Kurtosis are **0.18** and **0.18** respectively .
+
+3.  **Domain_Expertise**
+
+-   There are 57 observations .
+
+-   Minimum , Maximum and Range are **5** , **22** and **17** respectively .
+
+-   Mean and Trimmed Mean are **13.43** and **13.31** respectively .
+
+-   Median is **13** .
+
+-   Standard Deviation and standard error are **4.08** and **0.54** respectively.
+
+-   Skewness and Kurtosis are **-0.55** and **0.54** respectively .
+
+4.  **Resolution_Time**
+
+-   There are 57 observations .
+
+-   Minimum , Maximum and Range are **57** , **1081** and **1024** respectively .
+
+-   Mean and Trimmed Mean are **660.30** and **679.66** respectively .
+
+-   Median is **687** .
+
+-   Standard Deviation and standard error are **226.63** and **30.02** respectively.
+
+-   Skewness and Kurtosis are **-0.88** and **0.55** respectively .
+
+d.	Identify the relationship of explanatory variables with resolution time using appropriate data visualization technique ? Using the graph, kindly identify the variables related to the resolution time ? 
+```{r}
+# Boxplot of Volume
+boxplot(mdf$Volume , main = "Boxplot" , xlab = "Volume")
+
+# Boxplot of Team_Experience 
+boxplot(mdf$Team_Experience, main = "Boxplot", xlab = "Team Experience")
+
+# Boxplot of Domain_Expertise
+boxplot(mdf$Domain_Expertise, main = "Boxplot", xlab = "Domain Expertise")
+
+# Boxplot of Volume Resolution_Time
+boxplot(mdf$Resolution_Time, main = "Boxplot", xlab = "Resolution Time")
+
+# Matrix Plot to find the relationship among variables
+plot(mdf)
+```
+
+e.	Scale the variables using z and Min-Max transformations. After each transformation, identify the relationship of explanatory variables with resolution time using appropriate data visualization technique ? Is there any change in the relationship of variables with resolution time after transformation ?
+```{r}
+# 1.  Using scale function
+z_df <- scale(mdf)
+
+# Transformed data head
+z_df <- data.frame(z_df)
+head(z_df)
+
+# 2. Using Own function
+m <- apply(mdf, 2, mean)
+
+s <- apply(mdf, 2, sd)
+
+zt_df <- (mdf - m) / s
+
+zt_df <- data.frame(zt_df)
+
+#  3. Computing minimum and maximum of data
+mins <- apply(mdf, 2, min)
+
+maxs <- apply(mdf, 2, max)
+
+# Making min-max transformation
+tr_data <- scale(mdf, center = mins, scale = maxs - mins)
+
+tr_data <- data.frame(tr_data)
+
+# Head of Transformation
+head(tr_data)
+
+# Data Vusualization
+
+# Boxplot of Volume
+boxplot(z_df$Volume , main = "Boxplot" , xlab = "Volume")
+
+# Boxplot of Team_Experience 
+boxplot(z_df$Team_Experience, main = "Boxplot", xlab = "Team Experience")
+
+# Boxplot of Domain_Expertise
+boxplot(z_df$Domain_Expertise, main = "Boxplot", xlab = "Domain Expertise")
+
+# Boxplot of Volume Resolution_Time
+boxplot(z_df$Resolution_Time, main = "Boxplot", xlab = "Resolution Time")
+
+plot(z_df)
+```
+
+We can easily see that the *mean* and *standard deviation* of data is reduce to *0* and *1* respectively. It means that now the data follow *Standard Normal Distribution*.
+
+
+
+
+
+
+

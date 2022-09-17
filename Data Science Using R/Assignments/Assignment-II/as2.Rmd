@@ -1,0 +1,418 @@
+---
+title: "Assignment - II"
+author: "Mohammad Wasiq"
+date: '2022-06-09'
+output: html_document
+---
+
+Name -: **Mohammad Wasiq**
+
+E-mail -: [**mohammadwasiq0786\@gmail.com**](mailto:mohammadwasiq0786@gmail.com){.email}
+
+# First Problem
+
+1.  **The data on features given in the table below are collected to estimate the published relative performance (PRP) of a centralised processing unit. The data is given in the CPU_Data file.**
+
+![](images/Screenshot%20(174).png)
+
+**Read the Data**
+
+```{r, warning=FALSE, message=FALSE}
+library(readxl)
+df <- read_excel("F:/ISI R Course/Assignments/Assignment-II/CPU_Data.xlsx")
+head(df)
+```
+
+```{r, warning=FALSE, message=FALSE}
+attach(df)
+```
+
+a.  Provide a descriptive summary of fields in the dataset
+
+```{r}
+summary(df)
+```
+
+-   **MYCT** The *mean* of MYCT is $203.822$ and the *standard deviation* is $260.26$ .
+
+The *minimum* and *maximum* values are $17.00$ and $1500.00$ respectively.
+
+*25 %* of data of MYCT is below $50.00$ and *75 %* data is above $50.00$ .
+
+*50 %* of data of MYCT is below $110.00$ and rest data is above $110.00$ .
+
+*75 %* of data of MYCT is below $225.00$ and *25 %* data is above $225.00$ .
+
+-   **MMIN**
+
+The *mean* of MMIN is $287.98$ and the *standard deviation* is $3878.74$ .
+
+The *minimum* and *maximum* values are $64.00$ and $32000.00$ respectively.
+
+*25 %* of data of MMIN is below $768.00$ and *75 %* data is above $768.00$ .
+
+*50 %* of data of MMIN is below $2000.00$ and rest data is above $2000.00$ .
+
+*75 %* of data of MMIN is below $4000.00$ and *25 %* data is above $4000.00$ .
+
+-   **MMAX**
+
+The *mean* of MMAX is $11796.15$ and the *standard deviation* is $11726.56$ .
+
+The *minimum* and *maximum* values are $64.00$ and $64000.00$ respectively.
+
+*25 %* of data of MMAX is below $4000.00$ and *75 %* data is above $4000.00$ .
+
+*50 %* of data of MMAX is below $8000.00$ and rest data is above $8000.00$ .
+
+*75 %* of data of MMAX is below $16000.00$ and *25 %* data is above $16000.00$ .
+
+-   **CACH**
+
+The *mean* of MMAX is $25.20$ and the *standard deviation* is $40.62$ .
+
+The *minimum* and *maximum* values are $00.00$ and $256.00$ respectively.
+
+*25 %* of data of MMAX is below $00.00$ and *75 %* data is above $00.00$ .
+
+*50 %* of data of MMAX is below $8.00$ and rest data is above $8.00$ .
+
+*75 %* of data of MMAX is below $32.00$ and *25 %* data is above $32.00$ .
+
+-   **CHMIN**
+
+The *mean* of CHMIN is $4.67$ and the *standard deviation* is $6.81$ .
+
+The *minimum* and *maximum* values are $00.00$ and $52.00$ respectively.
+
+*25 %* of data of CHMIN is below $1.00$ and *75 %* data is above $1.00$ .
+
+*50 %* of data of CHMIN is below $2.00$ and rest data is above $2.00$ .
+
+*75 %* of data of CHMIN is below $6.00$ and *25 %* data is above $6.00$ .
+
+-   **CHMAX**
+
+The *mean* of CHMAX is $18.26$ and the *standard deviation* is $26.00$ .
+
+The *minimum* and *maximum* values are $00.00$ and $176.00$ respectively.
+
+*25 %* of data of CHMAX is below $5.00$ and *75 %* data is above $5.00$ .
+
+*50 %* of data of CHMAX is below $8.00$ and rest data is above $8.00$ .
+
+*75 %* of data of CHMAX is below $24.00$ and *25 %* data is above $24.00$ .
+
+-   **PRP**
+
+The *mean* of PRP is $105.62$ and the *standard deviation* is $160.83$.
+
+The *minimum* and *maximum* values are $6.00$ and $1150.00$ respectively.
+
+*25 %* of data of PRP is below $27.00$ and *75 %* data is above $27.00$ .
+
+*50 %* of data of PRP is below $50.00$ and rest data is above $50.00$ .
+
+*75 %* of data of PRP is below $113.00$ and *25 %* data is above $113.00$ .
+
+b.  Explore the relationship between the response variable PRP and explanatory features using scatter plots and correlation matrix. Give your interpretation of the relationship between response and explanatory features.
+
+```{r}
+plot(PRP, MYCT, main = "PRP Vs MYCT")
+
+plot(PRP, MMIN, main = "PRP Vs MMIN")
+
+plot(PRP, MMAX, main = "PRP Vs MMAX")
+
+plot(PRP, CACH, main = "PRP Vs CACH")
+
+plot(PRP, CHMIN, main = "PRP Vs MHMIN")
+
+plot(PRP, CHMAX, main = "PRP Vs MHMAX")
+
+pairs(df)
+```
+
+There is a high correlation between *PRP VS MMAX*, *PRP VS MMIN* whereas there is a low correlation between *PRP* VS rest variables.
+
+c.  Develop a model to predict the PRP using explanatory features. Provide the model coefficient table and interpret. Are all features have a significant impact on the response? Provide the mathematical expression of your model.
+
+```{r}
+l_model<- lm(PRP~. , data = df)
+
+summary(l_model)
+```
+
+**MOdel :**
+
+$$prp = \beta_0+ \beta_1(myct) + \beta_2(mmin) + \beta_3(mmax) + \beta_4(cach) + \beta_5(chmin) + \beta_6(chmax) + \epsilon$$
+
+**Fitted Model :**
+
+$$prp = −55.8939 + 0.0489(myct) + 0.0153(mmin) + 0.0056(mmax) + 0.6414 (cach) + (−0.2704)*(chmin) + 1.4825(chmax)
+$$
+
+d.  Provide F statistic value and corresponding p_value? Give your comments on model significance?
+
+$H_0 \beta_0 = \beta_1 = \beta_2 = \beta_3 = \beta_4 = \beta_5 = \beta_6$ VS
+
+$H_1 :$ At least one of $b_i's$ is not equal ; $i=1,\cdots, 6$
+
+The *F-statistic* of Model is $215.5$ with $6$ and $202$ degree of freedom and the corresponding p-value is $2.2e^{-16}$ which is less than $0.05$, so we reject our null hypothesis $H_0$ that implies that there is enough evidence to claim that *At least one of* $b_i's$ *is not equal* ; $i=1,\cdots, 6$
+
+e.  Provide R2 and adjusted R2 values. Comment on model accuracy.
+
+The value of *R-squared* is $0.8649$, and the value of *Adjusted R-squared* is $0.8609$ this implies that $86\%$ variation in *PRP* is explained by the model.
+
+f.  Comment on model adequacy based on residual analysis and plots. Provide normal probability plot of residuals and normality test result (test statistic and p_value) and comment on the normality of residuals.
+
+```{r}
+plot(PRP ~ l_model$residuals)
+
+qqnorm(l_model$residuals)
+
+shapiro.test(l_model$residuals)
+```
+
+The p-value is $2.597e^{-14}$ which is lesser than $0.05$ , now we conclude that *residuals* are not normal or not follows normality.
+
+g.  Provide Residuals versus Predicted values plot and given your interpretation.
+
+```{r}
+plot(l_model$residuals, l_model$fitted.values)
+```
+
+We can easily see that there is no correlation between residuals and predicted values.
+
+h.  Perform k fold (k = 10) cross-validation. Provide the mean square error and root mean square error obtained for original data and during cross-validation. Give your comments on model generalizability.
+
+```{r}
+# package to compute
+# cross - validation methods
+library(caret)
+
+# setting seed to generate a
+# reproducible random sampling
+set.seed(123)
+
+# defining training control
+# as cross-validation and 
+# value of K equal to 10
+train_control <- trainControl(method = "cv",
+                              number = 10)
+ 
+# training the model by assigning sales column
+# as target variable and rest other column
+# as independent variable
+model <- train(PRP ~., data = df, 
+               method = "lm",
+               trControl = train_control)
+
+print(model)
+```
+
+-   The *Root Mean Square Error* is $64.76$ which is the square root of Mean Squared error. It measures the standard deviation of residuals.
+
+-   The value of *Mean Absolute Error* is $41.59$ which represents the average of the absolute difference between the actual and predicted values in the dataset. It measures the average of the residuals in the dataset.
+
+-   The value of *Rsquared* is $0.792$ which represents the proportion of the variance in the dependent variable which is explained by the linear regression model.
+
+# Second Problem
+
+**2.  The data has collected on health profile parameters of people shown symptoms of heart disease and their diagnostic results are given in the Heart_Disease_Data file. The list of health profile features on which data is collected is given in the table below.
+
+![](images/Screenshot%20(175).png)
+
+
+
+```{r, warning=FALSE, message=FALSE}
+library(readxl)
+df <- read_excel("Heart_Disease_Data.xlsx")
+dim(df)
+
+attach(df)
+
+head(df)
+```
+
+a. Provide a descriptive summary of the features
+
+```{r}
+summary(df)
+```
+
+- **AGE**
+
+The *mean* of AGE is $54.36$ and the *standard deviation* is $9.08$.
+
+The *minimum* and *maximum* values are $29.00$ and $77.00$ respectively.
+
+*25 %* of data of AGE is below $47.50$ and *75 %* data is above $47.00$.
+
+*50 %* of data of AGE is below $55.00$ and rest data is above $55.00$.
+
+*75 %* of data of AGE is below $61.00$ and *25 %* data is above $61.00$.
+
+- **RestBP**
+
+The *mean* of RestBP is $131.62$ and the *standard deviation* is $17.53$.
+
+The *minimum* and *maximum* values are $94.00$ and $200.00$ respectively.
+
+*25 %* of data of RestBP is below $120.00$ and *75 %* data is above $120.00$.
+*50 %* of data of RestBP is below $130.00$ and rest data is above $130.00$.
+*75 %* of data of RestBP is below $140.00$ and *25 %* data is above $140.00$.
+
+- **Cholesteral**
+
+The *mean* of Cholesteral is $246.26$ and the *standard deviation* is $51.83$.
+
+The *minimum* and *maximum* values are $126.00$ and $564.00$ respectively.
+
+*25 %* of data of Cholesteral is below $211.00$ and *75 %* data is above $211.00$.
+
+*50 %* of data of Cholesteral is below $240.00$ and rest data is above $240.00$.
+
+*75 %* of data of Cholesteral is below $274.00$ and *25 %* data is above $274.00$.
+
+- **Max_HR**
+
+The *mean* of MaxHR is $149.64$ and the *standard deviation* is $22.9$.
+
+The *minimum* and *maximum* values are $71.00$ and $202.00$ respectively.
+
+*25 %* of data of MaxHR is below $133.50$ and *75 %* data is above $133.50$.
+
+*50 %* of data of MaxHR is below $153.00$ and rest data is above $153.00$.
+
+*75 %* of data of MaxHR is below $166.00$ and *25 %* data is above $166.00$.
+
+and so on...
+
+b. Explore the relationship between response "Result" and the features using graphically.
+```{r}
+pairs(Result ~., data = df)
+data.frame(cor(df))
+```
+
+
+c. Develop a logistic regression model to classify whether a patient is having heart disease or not using the feature values. Give the model coefficient table and the mathematical expression of the model.
+```{r}
+log_m<- glm(Result~., data = df, family = "binomial")
+
+summary(log_m)
+```
+
+
+$$Result = \frac{e^{\beta_0+ \beta_1 \times Age+ \beta_2 \times Sex+ \beta_3 \times CP+ \beta_4 \times RestBP+ \beta_5 \times Cholesteral+ \beta_6 \times FBP+ \beta_7 \times RestECG+ \beta_8 \times Max_HR+ \beta_9 \times ExAngina+ \beta_{10} \times Oldpeak+ \beta_{11} \times Slope+ \beta_{12} \times CA+ \beta_{13} \times Thal}}{1+e^{\beta_0+ \beta_1 \times Age+ \beta_2 \times Sex+ \beta_3 \times CP+ \beta_4 \times RestBP+ \beta_5 \times Cholesteral+ \beta_6 \times FBP+ \beta_7 \times RestECG+ \beta_8 \times Max_HR+ \beta_9 \times ExAngina+ \beta_{10} \times Oldpeak+ \beta_{11} \times Slope+ \beta_{12} \times CA+ \beta_{13} \times Thal}}$$
+
+$$Result = \frac{e^{3.45+ (-0.005) \times Age+ (-1.76) \times Sex+ 0.86 \times CP+ (-0.019) \times RestBP+ (-0.004) \times Cholesteral+ 0.034 \times FBP+ 0.466 \times RestECG+ 0.023 \times Max_HR+ (-98) \times ExAngina+ (-0.54) \times Oldpeak+ 0.58 \times Slope+ (-0.77) \times CA+ (-0.90) \times Thal}}{1+e^{3.45+ (-0.005) \times Age+ (-1.76) \times Sex+ 0.86 \times CP+ (-0.019) \times RestBP+ (-0.004) \times Cholesteral+ 0.034 \times FBP+ 0.466 \times RestECG+ 0.023 \times Max_HR+ (-98) \times ExAngina+ (-0.54) \times Oldpeak+ 0.58 \times Slope+ (-0.77) \times CA+ (-0.90) \times Thal}}$$
+d. Compare the model with a null model and provide corresponding p_value. Is the model significant?
+
+Only **Sex, CP, Max_HR, ExAngina, Oldpeak, CA, Thal** are significant and rest variables are not-significant because their *p-values* are lesser than $0.05$.
+
+
+e. Compute and give actual versus predicted matrix. Compute accuracy & misclassification %. Comment on model accuracy.
+```{r}
+#calculate probability of default for each individual in test dataset
+predicted <- predict(log_m, type="response")
+ap<- data.frame(Result, predicted) 
+head(ap)
+
+library(InformationValue)
+
+#convert defaults from "Yes" and "No" to 1's and 0's
+df$Result <- ifelse(df$Result == "Yes", 1, 0)
+
+#find optimal cutoff probability to use to maximize accuracy
+optimal <- optimalCutoff(df$Result, predicted)[1]
+optimal
+
+library(pscl)
+pscl::pR2(log_m)["McFadden"]
+```
+
+A value of $0.494$ is quite high for McFadden’s $R^2$, which indicates that our model fits the data very well and has high predictive power.
+
+
+f. Check model generalizability using k -fold (k = 10) cross-validation. Provide accuracy & misclassification % obtained for data used for developing the model and during cross-validation. Is there a deterioration in model performance? Comment on model generalizability.
+
+```{r}
+library(boot)
+
+set.seed(123)
+cv = cv.glm(df, log_m, K = 10)
+
+cv$delta
+```
+
+The first component of delta is $0.544$ which is the average mean-squared error that we obtain from doing K-fold CV.
+
+The second component of delta is $0.108$ which is the average mean-squared error that we obtain from doing K-fold CV, but with a bias correction. 
+
+g. Compute sensitivity, specificity, precision & f-measure. Comment on the aforementioned performance measures. Is the model equally good at predicting having heart disease (positive) and not having heart disease (negative) cases correctly?
+```{r}
+# Confusion Matrix
+cm<- confusionMatrix(Result, predicted)
+cm
+```
+
+**Calculate Sensitivity**
+```{r}
+recall<- sensitivity(Result, predicted)
+recall
+```
+
+Sensitivity of a classifier is the ratio between how much were correctly identified as positive to how much were actually positive.
+
+It indicate that $92 \%$ are correctly identified as positive to how much were actually positive.
+
+
+**Calculate Precision**
+
+```{r}
+tp<- cm[1,1]
+fp<- cm[1,2]
+precision_ <- tp/(tp+fp)
+precision_
+```
+
+How much were correctly classified as positive out of all positives.
+
+This indicate that $89\%$ are correctly classified as positive out of all positives.
+
+**Calculate Specificity**
+
+```{r}
+specificity(Result, predicted)
+```
+
+Specificity of a classifier is the ratio between how much were correctly classified as negative to how much was actually negative.
+
+This indicate that $76\%$ are correctly classified as negative to how much was actually negative.
+
+**Calculate Total Misclassification Error Rate**
+
+```{r}
+misClassError(Result, predicted, threshold=optimal)
+```
+
+**F-measure**
+
+```{r}
+f_measure<- (2*(recall*precision_)) / (recall + precision_)
+f_measure
+```
+
+f-measure is considered a better indicator of the classifier’s performance than the regular accuracy measure.
+
+This indicates that $90 \%$ are better indicator of the classifier’s performance than the regular accuracy measure.
+
+**ROC curve**
+
+```{r}
+#plot the ROC curve
+plotROC(Result, predicted)
+```
+
+
